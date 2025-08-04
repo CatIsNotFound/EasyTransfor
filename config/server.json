@@ -1,0 +1,6 @@
+{
+    "mode": "server",
+    "port": 8888,
+    "output_path": "received",
+    "no_log": false
+}

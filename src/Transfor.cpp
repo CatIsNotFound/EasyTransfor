@@ -53,10 +53,31 @@ const QList<QString> &Transfor::dirList() const {
 
 void Transfor::start() {
     _tcp_socket->connectToHost(_host_address, _host_port);
+    _tcp_socket->waitForConnected(_time_out);
+    _tcp_socket->waitForReadyRead(_time_out);
 }
 
 void Transfor::stop() {
     _tcp_socket->disconnectFromHost();
+}
+
+void Transfor::transfor() {
+    if (!_tcp_socket->isValid()) {
+        qDebug() << "Can't send the message!";
+        return;
+    }
+    if (_dir_list.empty() && _file_list.empty()) {
+        _tcp_socket->write("Nothing to transfor!");
+    } else {
+        _tcp_socket->write("\nTransfor files: ");
+        for (auto& f : _file_list) {
+            _tcp_socket->write(QString("\n%1").arg(f).toStdString().c_str());
+        }
+        for (auto& d : _dir_list) {
+            _tcp_socket->write(QString("\n%1").arg(d).toStdString().c_str());
+        }
+        _tcp_socket->write("\n");
+    }
 }
 
 void Transfor::readyRead() {
@@ -76,6 +97,7 @@ Transfor::Transfor(QObject *parent)
     _tcp_socket = new QTcpSocket(parent);
     connect(_tcp_socket, &QTcpSocket::connected, [&] {
         _is_connected = true;
+        _tcp_socket->waitForBytesWritten(_time_out);
         emit connected();
     });
     connect(_tcp_socket, &QTcpSocket::disconnected, [&] {

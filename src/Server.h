@@ -21,7 +21,7 @@ public:
     void stop();
     void newConnection();
     void socketDisconnect();
-    void readyRead(QTcpSocket* socket);
+    void readyRead();
 
     ~Server();
 signals:
@@ -29,7 +29,7 @@ signals:
     void serverStopped();
     void newOneConnected(const QString& uuid);
     void someOneDisconnected(const QString& uuid);
-    void received(const QString& msg);
+    void received(const QString& uuid, const QString& msg);
 
 private:
     explicit Server(QObject *parent = nullptr);

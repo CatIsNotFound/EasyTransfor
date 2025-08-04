@@ -28,6 +28,7 @@ public:
 
     void start();
     void stop();
+    void transfor();
 
     void readyRead();
     void errorOccured(QTcpSocket::SocketError error);
